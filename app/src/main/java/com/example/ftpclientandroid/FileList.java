@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.concurrent.ThreadPoolExecutor;
 
 enum FileOperation {
+    // Operations for FTP, pass it to handle switch and get the functions in FileManager.java
     UPLOAD,
     DOWNLOAD,
     COPY,
@@ -118,9 +119,10 @@ public class FileList extends AppCompatActivity {
     }
 
     public void startFileCreateIntent(FTPFile file) {
+        String type = FileMimeManager.getMimeType(file.getName());
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/octet-stream");
+        intent.setType(type);
         intent.putExtra(Intent.EXTRA_TITLE, file.getName());
         createFileLauncher.launch(intent);
     }

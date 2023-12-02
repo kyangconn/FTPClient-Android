@@ -19,7 +19,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class FileManager {
     private final Context context;
-
     private final FTPConnection ftpConnection;
     private final ContentResolver contentResolver;
     private final ThreadPoolExecutor threadPoolExecutor;

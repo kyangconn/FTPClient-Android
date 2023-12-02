@@ -29,6 +29,11 @@ public class FileIconManager {
         FILE_TYPE_ICONS.put("xls", R.drawable.ic_normal_white_grid_xls);
         FILE_TYPE_ICONS.put("xml", R.drawable.ic_normal_white_grid_xml);
         FILE_TYPE_ICONS.put("zip", R.drawable.ic_normal_white_grid_zip);
+        FILE_TYPE_ICONS.put("avi", R.drawable.ic_normal_white_grid_video);
+        FILE_TYPE_ICONS.put("flv", R.drawable.ic_normal_white_grid_video);
+        FILE_TYPE_ICONS.put("mov", R.drawable.ic_normal_white_grid_video);
+        FILE_TYPE_ICONS.put("mp4", R.drawable.ic_normal_white_grid_video);
+        FILE_TYPE_ICONS.put("wmv", R.drawable.ic_normal_white_grid_video);
     }
 
     public static int getIcon(String fileType) {
