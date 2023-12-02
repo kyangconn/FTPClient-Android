@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey"
+    tools:context="com.example.ftpclientandroid.AddFTP">
+
+    <LinearLayout
+        android:id="@+id/titleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="30dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_public_back" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/add_ftp_page"
+            android:textColor="@color/black"
+            android:textSize="26sp" />
+
+        <ImageButton
+            android:id="@+id/confirm_button"
+            android:layout_width="30dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:contentDescription="@string/ok"
+            android:src="@drawable/ic_public_ok" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_ip"
+                style="@style/BaseTextView"
+                android:background="@color/grey"
+                android:text="@string/server_ip_address" />
+
+            <LinearLayout
+                android:id="@+id/ipLinear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:weightSum="4">
+
+                <EditText
+                    android:id="@+id/ip_1"
+                    style="@style/BaseEditText"
+                    android:layout_weight="1"
+                    android:autofillHints="@string/server_ip_address"
+                    android:hint="@string/ip_test"
+                    android:inputType="number"
+                    android:nextFocusForward="@id/ip_2"
+                    android:textColorHint="#616161" />
+
+                <EditText
+                    android:id="@+id/ip_2"
+                    style="@style/BaseEditText"
+                    android:layout_weight="1"
+                    android:autofillHints="@string/server_ip_address"
+                    android:hint="@string/ip_test_2"
+                    android:inputType="number"
+                    android:nextFocusForward="@id/ip_3"
+                    android:textColorHint="#616161" />
+
+                <EditText
+                    android:id="@+id/ip_3"
+                    style="@style/BaseEditText"
+                    android:layout_weight="1"
+                    android:autofillHints="@string/server_ip_address"
+                    android:hint="@string/ip_test_3"
+                    android:inputType="number"
+                    android:nextFocusForward="@id/ip_4"
+                    android:textColorHint="#616161" />
+
+                <EditText
+                    android:id="@+id/ip_4"
+                    style="@style/BaseEditText"
+                    android:layout_weight="1"
+                    android:autofillHints="@string/server_ip_address"
+                    android:hint="@string/ip_test_4"
+                    android:inputType="number"
+                    android:nextFocusForward="@id/port"
+                    android:textColorHint="#616161" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/portLinear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|top"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/grey"
+                    android:text="@string/text_port"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2" />
+
+                <EditText
+                    android:id="@+id/port"
+                    style="@style/BaseEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints="server_port"
+                    android:hint="@string/server_port"
+                    android:inputType="number"
+                    android:textColorHint="#616161" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/name_text"
+                style="@style/BaseTextView"
+                android:background="@color/grey"
+                android:text="@string/server_name" />
+
+            <EditText
+                android:id="@+id/name_edit"
+                style="@style/BaseEditText"
+                android:autofillHints="server_name"
+                android:hint="@string/server_name"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/username_text"
+                style="@style/BaseTextView"
+                android:background="@color/grey"
+                android:text="@string/username" />
+
+            <EditText
+                android:id="@+id/username_edit"
+                style="@style/BaseEditText"
+                android:autofillHints="server username"
+                android:hint="@string/username"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/password_text"
+                style="@style/BaseTextView"
+                android:background="@color/grey"
+                android:text="@string/password" />
+
+            <EditText
+                android:id="@+id/password_edit"
+                style="@style/BaseEditText"
+                android:autofillHints="server password"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+
+            <LinearLayout
+                android:id="@+id/passiveModeLinear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|top"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <TextView
+                    android:id="@+id/passiveMode"
+                    style="@style/BaseTextView"
+                    android:layout_weight="1"
+                    android:background="@color/grey"
+                    android:text="@string/passivemode" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/passiveSwitch"
+                    style="@style/SwitchMaterialLinear"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/FTPSLinear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|top"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/passiveModeLinear">
+
+                <TextView
+                    style="@style/BaseTextView"
+                    android:layout_weight="1"
+                    android:background="@color/grey"
+                    android:text="@string/ftps" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/ftpswitch"
+                    style="@style/SwitchMaterialLinear"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/CodingLinear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|top"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    style="@style/BaseTextView"
+                    android:background="@color/grey"
+                    android:text="@string/server_encoding" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2" />
+
+                <TextView
+                    android:id="@+id/encoding"
+                    style="@style/BaseTextView"
+                    android:background="@color/grey"
+                    android:text="@string/gbk"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/coding_switch"
+                    style="@style/SwitchMaterialLinear"
+                    android:checked="true"
+                    android:textOff="@string/utf_8"
+                    android:textOn="@string/gbk" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

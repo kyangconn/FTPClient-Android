@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name" translatable="false">FTPClient</string>
+    <string name="edit_server" translatable="false">Edit_Server</string>
+    <string name="add_server" translatable="false">Add_server</string>
+    <string name="ftp_servers">FTP Servers:</string>
+    <string name="add_ftp_page">Add FTP Server</string>
+    <string name="server_ip_address">server ip address:</string>
+    <string name="back">back</string>
+    <string name="ok">OK</string>
+    <string name="ip_test">192</string>
+    <string name="ip_test_2">168</string>
+    <string name="ip_test_3">1</string>
+    <string name="ip_test_4">123</string>
+    <string name="text_port">server port:</string>
+    <string name="server_port">port</string>
+    <string name="server_name">server name:</string>
+    <string name="username">username:</string>
+    <string name="password">password:</string>
+    <string name="passivemode">PassiveMode:</string>
+    <string name="ftps">Use FTPS(FTP ove TLS):</string>
+    <string name="download_file">download file</string>
+    <string name="copy_file">copy file</string>
+    <string name="move_file">move file</string>
+    <string name="delete_file">delete file</string>
+    <string name="server_config_image">Server configs</string>
+    <string name="auth_title">Authentication</string>
+    <string name="search">search</string>
+    <string name="confirm">confirm</string>
+    <string name="file_list">file list</string>
+    <string name="server_encoding">Server Encoding:</string>
+    <string name="gbk">GBK</string>
+    <string name="utf_8">UTF-8</string>
+</resources>
