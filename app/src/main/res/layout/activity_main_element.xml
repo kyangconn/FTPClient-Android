@@ -48,6 +48,7 @@
         android:id="@+id/server_edit"
         style="@style/BaseImageButton"
         android:background="@color/white"
+        android:contentDescription="@string/ftp_servers"
         android:src="@drawable/ic_public_edit"
         app:layout_constraintBaseline_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

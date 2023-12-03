@@ -6,28 +6,36 @@
     android:layout_height="match_parent"
     android:layout_gravity="start"
     android:background="@color/grey"
-    tools:context="com.example.ftpclientandroid.MainActivity">
+    tools:context="com.example.ftpclientandroid.activities.MainActivity">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/titleBar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        style="@style/TitleBarLayout"
         android:background="@color/white"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="@string/app_name"
-        android:textColor="@color/black"
-        android:textSize="26sp"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_weight="8" />
+        app:layout_constraintBottom_toTopOf="@id/scrollView"
+        app:layout_constraintVertical_weight="8">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/TitleTextView"
+            android:text="@string/app_name" />
+
+        <ImageButton
+            android:id="@+id/search_server"
+            style="@style/BaseImageButton"
+            android:background="@color/white"
+            android:contentDescription="@string/search"
+            android:src="@drawable/ic_public_search" />
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/grey"
         android:contentDescription="@string/add_server"
@@ -48,14 +56,13 @@
                 android:layout_margin="10dp"
                 android:background="@color/grey"
                 android:text="@string/ftp_servers" />
-
         </LinearLayout>
     </ScrollView>
 
     <LinearLayout
         android:id="@+id/dock"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -66,9 +73,7 @@
 
         <ImageButton
             android:id="@+id/editFtp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start|center_vertical"
+            style="@style/BaseImageButton"
             android:background="@color/white"
             android:contentDescription="@string/edit_server"
             android:src="@drawable/ic_public_edit" />
@@ -76,13 +81,11 @@
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="2" />
 
         <ImageButton
             android:id="@+id/addFtp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center|end"
+            style="@style/BaseImageButton"
             android:background="@color/white"
             android:contentDescription="@string/add_server"
             android:src="@drawable/ic_public_add" />
@@ -103,9 +106,7 @@
 
         <ImageButton
             android:id="@+id/editBack"
-            android:layout_width="50dp"
-            android:layout_height="60dp"
-            android:layout_gravity="start|center_vertical"
+            style="@style/BaseImageButton"
             android:background="@color/white"
             android:contentDescription="@string/edit_server"
             android:src="@drawable/ic_public_back" />
@@ -113,13 +114,11 @@
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="2" />
 
         <ImageButton
             android:id="@+id/editPass"
-            android:layout_width="50dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center|end"
+            style="@style/BaseImageButton"
             android:background="@color/white"
             android:contentDescription="@string/add_server"
             android:src="@drawable/ic_public_ok" />

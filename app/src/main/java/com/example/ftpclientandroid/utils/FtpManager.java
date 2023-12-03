@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid;
+package com.example.ftpclientandroid.utils;
 
 import android.util.Log;
 
@@ -17,11 +17,11 @@ import javax.net.ssl.X509TrustManager;
 /**
  * @author kyang
  */
-public class FTPConnection {
-    private static FTPConnection instance;
+public class FtpManager {
+    private static FtpManager instance;
     private final FTPClient ftpClient;
 
-    private FTPConnection(boolean useFTPS) {
+    private FtpManager(boolean useFTPS) {
         if (useFTPS) {
             FTPSClient ftps = new FTPSClient("TLS", false);
             ftps.setSocketFactory(new DefaultSocketFactory());
@@ -49,14 +49,14 @@ public class FTPConnection {
         }
     }
 
-    public static synchronized FTPConnection getInstance(boolean useFTPS) {
+    public static synchronized FtpManager getInstance(boolean useFTPS) {
         if (instance == null) {
-            instance = new FTPConnection(useFTPS);
+            instance = new FtpManager(useFTPS);
         }
         return instance;
     }
 
-    public static synchronized FTPConnection getCurrentInstance() {
+    public static synchronized FtpManager getCurrentInstance() {
         return instance;
     }
 

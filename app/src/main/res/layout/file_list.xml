@@ -5,38 +5,30 @@
     android:layout_height="match_parent"
     android:background="@color/grey"
     android:orientation="vertical"
-    tools:context="com.example.ftpclientandroid.FileList">
+    tools:context="com.example.ftpclientandroid.activities.FileList">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/back"
             style="@style/BaseImageButton"
-            android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="@string/back"
             android:src="@drawable/ic_public_back" />
 
         <TextView
-            android:id="@+id/titleBar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@color/white"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/ftp_servers"
-            android:textColor="@color/black"
-            android:textSize="26sp" />
+            android:id="@+id/title"
+            style="@style/TitleTextView"
+            android:text="@string/app_name" />
 
         <ImageButton
             android:id="@+id/file_add"
             style="@style/BaseImageButton"
-            android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="@string/add_server"
             android:src="@drawable/ic_public_add" />
@@ -44,7 +36,6 @@
         <ImageButton
             android:id="@+id/search"
             style="@style/BaseImageButton"
-            android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="@string/search"
             android:src="@drawable/ic_public_search" />
@@ -53,8 +44,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="80"
+        android:layout_height="0dp"
+        android:layout_weight="86"
         android:contentDescription="@string/file_list">
 
         <LinearLayout
@@ -70,15 +61,13 @@
         android:id="@+id/dock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageButton
             android:id="@+id/dock_download"
             style="@style/BaseImageButton"
-            android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="@string/download_file"
             android:src="@drawable/ic_public_download" />
@@ -86,7 +75,6 @@
         <ImageButton
             android:id="@+id/dock_copy"
             style="@style/BaseImageButton"
-            android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="@string/copy_file"
             android:src="@drawable/ic_public_copy" />
@@ -94,7 +82,6 @@
         <ImageButton
             android:id="@+id/dock_move"
             style="@style/BaseImageButton"
-            android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="@string/move_file"
             android:src="@drawable/ic_public_move" />
@@ -102,7 +89,6 @@
         <ImageButton
             android:id="@+id/dock_delete"
             style="@style/BaseImageButton"
-            android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="@string/delete_file"
             android:src="@drawable/ic_public_delete" />

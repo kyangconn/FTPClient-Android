@@ -5,48 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey"
-    tools:context="com.example.ftpclientandroid.AddFTP">
+    tools:context="com.example.ftpclientandroid.activities.AddFTP">
 
     <LinearLayout
         android:id="@+id/titleBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/TitleBarLayout"
         android:background="@color/white"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="4"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintBottom_toTopOf="@id/scrollView">
 
         <ImageButton
             android:id="@+id/back"
-            android:layout_width="30dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
+            style="@style/BaseImageButton"
             android:background="@color/white"
             android:contentDescription="@string/back"
             android:src="@drawable/ic_public_back" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/add_ftp_page"
-            android:textColor="@color/black"
-            android:textSize="26sp" />
+            style="@style/TitleTextView"
+            android:text="@string/add_ftp_page" />
 
         <ImageButton
             android:id="@+id/confirm_button"
-            android:layout_width="30dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
+            style="@style/BaseImageButton"
             android:background="@color/white"
-            android:contentDescription="@string/ok"
+            android:contentDescription="@string/confirm"
             android:src="@drawable/ic_public_ok" />
     </LinearLayout>
 

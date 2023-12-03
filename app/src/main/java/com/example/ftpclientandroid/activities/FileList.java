@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid;
+package com.example.ftpclientandroid.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,6 +18,14 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ftpclientandroid.R;
+import com.example.ftpclientandroid.fileManagement.DownloadCommand;
+import com.example.ftpclientandroid.fileManagement.FileCommand;
+import com.example.ftpclientandroid.fileManagement.UploadCommand;
+import com.example.ftpclientandroid.utils.FtpManager;
+import com.example.ftpclientandroid.utils.FileManager;
+import com.example.ftpclientandroid.utils.ThreadManager;
+
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.IOException;
@@ -26,34 +34,25 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.ThreadPoolExecutor;
 
-enum FileOperation {
-    // Operations for FTP, pass it to handle switch and get the functions in FileManager.java
-    UPLOAD,
-    DOWNLOAD,
-    COPY,
-    MOVE
-}
-
 /**
  * @author kyang
  */
 public class FileList extends AppCompatActivity {
-    private final FTPConnection ftpConnection = FTPConnection.getCurrentInstance();
+    private final FtpManager ftpManager = FtpManager.getCurrentInstance();
     private FTPFile selectFile;
-    private FileManager fileManager;
     private ThreadPoolExecutor threadPoolExecutor;
+    private ActivityResultLauncher<Intent> createFileLauncher;
     private LinearLayout container;
     private String currentPath = "/";
-    private ActivityResultLauncher<Intent> createFileLauncher;
-    private FileOperation currentOperation;
+    private FileCommand currentCommand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.file_management);
+        setContentView(R.layout.file_list);
 
         String titleName = getIntent().getStringExtra("serverName");
-        TextView title = findViewById(R.id.titleBar);
+        TextView title = findViewById(R.id.title);
         title.setText(titleName);
 
         container = findViewById(R.id.filelist);
@@ -64,15 +63,14 @@ public class FileList extends AppCompatActivity {
         ImageButton search = findViewById(R.id.search);
         search.setOnClickListener(view -> search());
 
-        threadPoolExecutor = ThreadPoolManager.getInstance();
+        threadPoolExecutor = ThreadManager.getInstance();
 
-        fileManager = new FileManager(this, ftpConnection, getContentResolver(), threadPoolExecutor);
         createFileLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 this::handleCreateFileResult
         );
 
-        if (ftpConnection != null) {
+        if (ftpManager != null) {
             refreshFileList(currentPath);
         }
     }
@@ -80,8 +78,8 @@ public class FileList extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if ("/".equals(currentPath)) {
-            if (ftpConnection != null && ftpConnection.isConnected()) {
-                ftpConnection.disconnect();
+            if (ftpManager != null && ftpManager.isConnected()) {
+                ftpManager.disconnect();
             }
             startActivity(new Intent(this, MainActivity.class));
             finish();
@@ -95,31 +93,16 @@ public class FileList extends AppCompatActivity {
     private void handleCreateFileResult(ActivityResult result) {
         if (result.getResultCode() == Activity.RESULT_OK) {
             Intent data = result.getData();
-            if (data != null) {
+            if (data != null && currentCommand != null) {
                 Uri uri = data.getData();
-                switch (currentOperation) {
-                    case UPLOAD:
-                        fileManager.uploadFile(uri, currentPath);
-                        break;
-                    case DOWNLOAD:
-                        if (selectFile != null) {
-                            String fullPath = currentPath.endsWith("/") ? currentPath + selectFile.getName() : currentPath + "/" + selectFile.getName();
-                            fileManager.downloadFile(uri, fullPath);
-                        }
-                        break;
-                    case COPY:
-                        break;
-                    case MOVE:
-                        break;
-                    default: {
-                    }
-                }
+                String fullPath = currentPath.endsWith("/") ? currentPath + selectFile.getName() : currentPath + "/" + selectFile.getName();
+                currentCommand.execute(uri, fullPath);
             }
         }
     }
 
     public void startFileCreateIntent(FTPFile file) {
-        String type = FileMimeManager.getMimeType(file.getName());
+        String type = FileManager.getMimeType(file.getName());
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType(type);
@@ -134,7 +117,7 @@ public class FileList extends AppCompatActivity {
 
         threadPoolExecutor.execute(() -> {
             try {
-                FTPFile[] files = ftpConnection.listFiles(currentPath);
+                FTPFile[] files = ftpManager.listFiles(currentPath);
                 runOnUiThread(() -> updateFileListView(files));
             } catch (IOException e) {
                 Log.e("refreshFileList", "Error: " + e.getMessage(), e);
@@ -148,7 +131,7 @@ public class FileList extends AppCompatActivity {
     }
 
     private void uploadFile() {
-        currentOperation = FileOperation.UPLOAD;
+        currentCommand = new UploadCommand(this, ftpManager, getContentResolver(), threadPoolExecutor);
         // 启动文件选择器
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
@@ -195,7 +178,7 @@ public class FileList extends AppCompatActivity {
             int i = fileName.lastIndexOf('.');
             if (i > 0) {
                 String extension = fileName.substring(i + 1).toLowerCase();
-                return FileIconManager.getIcon(extension);
+                return FileManager.getIcon(extension);
             } else {
                 return R.drawable.ic_normal_white_grid_unknown;
             }
@@ -204,15 +187,19 @@ public class FileList extends AppCompatActivity {
 
     private void clickFile(FTPFile file) {
         if (file.isDirectory()) {
-            refreshFileList(file.getName());
-            try {
-                ftpConnection.changeWorkingDirectory(file.getName());
-            } catch (IOException e) {
-                Log.e("changeDir", "ftp.changeWorkingDir", e);
-            }
+            threadPoolExecutor.execute(() -> {
+                try {
+                    if (ftpManager.changeWorkingDirectory(currentPath + file.getName() + '/')) {
+                        refreshFileList(file.getName());
+                    }
+                } catch (IOException e) {
+                    Log.e("changeDir", "ftp.changeWorkingDir", e);
+                }
+            });
+
         } else {
             selectFile = file;
-            currentOperation = FileOperation.DOWNLOAD;
+            currentCommand = new DownloadCommand(this, ftpManager, getContentResolver(), threadPoolExecutor);
             startFileCreateIntent(file);
         }
     }
@@ -226,7 +213,8 @@ public class FileList extends AppCompatActivity {
         selectFile = file;
 
         download.setOnClickListener(v -> {
-            currentOperation = FileOperation.DOWNLOAD;
+            currentCommand = new DownloadCommand(this, ftpManager, getContentResolver(), threadPoolExecutor);
+
             startFileCreateIntent(file);
             dock.setVisibility(View.GONE);
         });
@@ -235,12 +223,11 @@ public class FileList extends AppCompatActivity {
             dock.setVisibility(View.GONE);
         });
         move.setOnClickListener(v -> {
-            currentOperation = FileOperation.MOVE;
             dock.setVisibility(View.GONE);
         });
         delete.setOnClickListener(v -> {
             try {
-                ftpConnection.deleteFile(file.getName());
+                ftpManager.deleteFile(file.getName());
             } catch (IOException e) {
                 Log.e("delete", "delete file error", e);
                 throw new RuntimeException(e);

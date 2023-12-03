@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid;
+package com.example.ftpclientandroid.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +17,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.example.ftpclientandroid.utils.DialogCallback;
+import com.example.ftpclientandroid.utils.FtpManager;
+import com.example.ftpclientandroid.R;
+import com.example.ftpclientandroid.utils.ThreadManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        threadPoolExecutor = ThreadPoolManager.getInstance();
+        threadPoolExecutor = ThreadManager.getInstance();
 
         container = findViewById(R.id.FTPlist);
         for (int i = 0; i < getServerConfigCount(); i++) {
@@ -60,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
         }
+
+        ImageButton search = findViewById(R.id.search_server);
+        search.setOnClickListener(v -> search());
 
         dock = findViewById(R.id.dock);
         editDock = findViewById(R.id.editdock);
@@ -139,7 +147,13 @@ public class MainActivity extends AppCompatActivity {
         boolean finalFtps = ftps;
         String finalEncode = encode;
         String finalServerName = serverName;
-        layout.setOnClickListener(v -> showCustomDialog(finalUsername, isAuthSuccessful -> {
+        layout.setOnClickListener(v -> getDialog(finalIpAddrString, finalPortNumber, finalUsername, finalPassword, finalMode, finalFtps, finalEncode, finalServerName));
+
+        return layout;
+    }
+
+    private void getDialog(String finalIpAddrString, int finalPortNumber, String finalUsername, String finalPassword, boolean finalMode, boolean finalFtps, String finalEncode, String finalServerName) {
+        authenticationDialog(finalUsername, isAuthSuccessful -> {
             if (!isAuthSuccessful) {
                 runOnUiThread(() -> Toast.makeText(this,
                         "Authentication not passed, please try again", Toast.LENGTH_SHORT).show());
@@ -152,9 +166,9 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            final FTPConnection ftpConnection = FTPConnection.getInstance(finalFtps);
+            final FtpManager ftpManager = FtpManager.getInstance(finalFtps);
             threadPoolExecutor.execute(() -> {
-                boolean isConnected = ftpConnection.connect(
+                boolean isConnected = ftpManager.connect(
                         finalIpAddrString, finalPortNumber,
                         finalUsername, finalPassword,
                         finalMode, finalEncode);
@@ -169,12 +183,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             });
-        }));
-
-        return layout;
+        });
     }
 
-    private void showCustomDialog(String username, DialogCallback callback) {
+    private void authenticationDialog(String username, DialogCallback callback) {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.server_auth, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -196,6 +208,11 @@ public class MainActivity extends AppCompatActivity {
 
         cancel.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
+    }
+
+    private void search() {
+        startActivity(new Intent(this, SearchFTP.class));
+        finish();
     }
 
 

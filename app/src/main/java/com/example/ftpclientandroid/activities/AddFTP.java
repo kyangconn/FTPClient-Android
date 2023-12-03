@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid;
+package com.example.ftpclientandroid.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ftpclientandroid.R;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.json.JSONArray;
@@ -30,7 +31,7 @@ public class AddFTP extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_ftp);
+        setContentView(R.layout.add_ftp);
 
         ip1 = findViewById(R.id.ip_1);
         ip2 = findViewById(R.id.ip_2);
@@ -50,7 +51,7 @@ public class AddFTP extends AppCompatActivity {
         }
 
         ImageButton backPage = findViewById(R.id.back);
-        backPage.setOnClickListener(view -> backToMain());
+        backPage.setOnClickListener(view -> onBackPressed());
 
         ImageButton confirmAdd = findViewById(R.id.confirm_button);
         confirmAdd.setOnClickListener(view -> confirmAdd());
@@ -69,7 +70,8 @@ public class AddFTP extends AppCompatActivity {
         setJumpTo(ip4, serverPort);
     }
 
-    private void backToMain() {
+    @Override
+    public void onBackPressed() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
@@ -106,7 +108,7 @@ public class AddFTP extends AppCompatActivity {
         String encoding = encodeSwitcher.isChecked() ? "GBK" : "UTF-8";
 
         saveServerConfig(new String[]{ipPart1, ipPart2, ipPart3, ipPart4, portStr}, alias, userName, passWord, passiveMode, ftpStat, encoding);
-        backToMain();
+        onBackPressed();
     }
 
     private boolean isValidIpPart(String part) {
