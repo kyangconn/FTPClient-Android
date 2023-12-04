@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +17,8 @@ import com.example.ftpclientandroid.R;
 import com.example.ftpclientandroid.utils.NetworkUtils;
 import com.example.ftpclientandroid.utils.Permission;
 import com.example.ftpclientandroid.utils.ThreadManager;
+
+import org.json.JSONArray;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -65,10 +68,15 @@ public class SearchFTP extends AppCompatActivity {
         textView.setText(ip);
         textView.setTextColor(getResources().getColor(R.color.black, null));
         textView.setTextSize(18);
-        textView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
+        textView.setClickable(true);
         textView.setPadding(10, 10, 10, 10);
+        textView.setBackground(ContextCompat.getDrawable(SearchFTP.this, R.drawable.bg_rounded_button));
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        textParams.setMargins(10, 10, 10, 10);
+        textView.setLayoutParams(textParams);
 
         Drawable drawable = ContextCompat.getDrawable(SearchFTP.this, R.drawable.ic_public_storage);
         int sizeInPixels = (int) (50 * SearchFTP.this.getResources().getDisplayMetrics().density);
@@ -79,7 +87,24 @@ public class SearchFTP extends AppCompatActivity {
         textView.setCompoundDrawables(drawable, null, null, null);
         textView.setCompoundDrawablePadding(10);
 
+        textView.setOnClickListener(v -> textButton(ip));
+
         container.addView(textView);
+    }
+
+    private void textButton(String ip) {
+        JSONArray array = new JSONArray();
+
+        String[] ipParts = ip.split("\\.");
+        for (String part : ipParts) {
+            array.put(part);
+        }
+        array.put(String.valueOf(port));
+
+        String result = String.format("{\"IPAndPort\":%s,\"Mode\":true,\"FTPS\":true,\"Encode\":\"GBK\"}", array);
+        startActivity(new Intent(this, AddFTP.class)
+                .putExtra("ServerConfig", result));
+        finish();
     }
 
     @Override

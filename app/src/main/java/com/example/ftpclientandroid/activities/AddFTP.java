@@ -15,28 +15,36 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ftpclientandroid.R;
+import com.example.ftpclientandroid.utils.FtpManager;
+import com.example.ftpclientandroid.utils.ThreadManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * @author kyang
  */
 public class AddFTP extends AppCompatActivity {
-    private EditText ip1, ip2, ip3, ip4, serverPort, serverName, username, password;
+    private EditText ipPart1, ipPart2, ipPart3, ipPart4, serverPort, serverName, username, password;
+    private String ipText1, ipText2, ipText3, ipText4, portStr, serverNameText, usernameText, passwordText, encodeText;
     private SwitchMaterial passiveSwitcher, ftpSwitcher, encodeSwitcher;
+    private boolean mode, ftps, encoding;
+    private JSONObject serverConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_ftp);
 
-        ip1 = findViewById(R.id.ip_1);
-        ip2 = findViewById(R.id.ip_2);
-        ip3 = findViewById(R.id.ip_3);
-        ip4 = findViewById(R.id.ip_4);
+        ipPart1 = findViewById(R.id.ip_1);
+        ipPart2 = findViewById(R.id.ip_2);
+        ipPart3 = findViewById(R.id.ip_3);
+        ipPart4 = findViewById(R.id.ip_4);
         serverPort = findViewById(R.id.port);
         serverName = findViewById(R.id.name_edit);
         username = findViewById(R.id.username_edit);
@@ -44,30 +52,42 @@ public class AddFTP extends AppCompatActivity {
         passiveSwitcher = findViewById(R.id.passiveSwitch);
         ftpSwitcher = findViewById(R.id.ftpswitch);
         encodeSwitcher = findViewById(R.id.coding_switch);
-        TextView encodeText = findViewById(R.id.encoding);
 
-        if (getIntent().getStringExtra("serverConfig") != null) {
-            loadServerConfig();
+        String configStr = getIntent().getStringExtra("serverConfig");
+        if (configStr != null) {
+            try {
+                serverConfig = new JSONObject(configStr);
+            } catch (JSONException e) {
+                Log.e("AddFTP", "Error parsing JSON", e);
+                serverConfig = new JSONObject();
+            }
+        } else {
+            serverConfig = new JSONObject();
         }
+        loadServerConfig();
 
         ImageButton backPage = findViewById(R.id.back);
-        backPage.setOnClickListener(view -> onBackPressed());
+        backPage.setOnClickListener(v -> onBackPressed());
 
         ImageButton confirmAdd = findViewById(R.id.confirm_button);
-        confirmAdd.setOnClickListener(view -> confirmAdd());
+        confirmAdd.setOnClickListener(v -> confirmAdd());
 
+        FloatingActionButton confirmFtp = findViewById(R.id.confirm_fab);
+        confirmFtp.setOnClickListener(v -> confirmFtp());
+
+        TextView encodeTextView = findViewById(R.id.encoding);
         encodeSwitcher.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                encodeText.setText(R.string.gbk);
+                encodeTextView.setText(R.string.gbk);
             } else {
-                encodeText.setText(R.string.utf_8);
+                encodeTextView.setText(R.string.utf_8);
             }
         });
 
-        setJumpTo(ip1, ip2);
-        setJumpTo(ip2, ip3);
-        setJumpTo(ip3, ip4);
-        setJumpTo(ip4, serverPort);
+        setJumpTo(ipPart1, ipPart2);
+        setJumpTo(ipPart2, ipPart3);
+        setJumpTo(ipPart3, ipPart4);
+        setJumpTo(ipPart4, serverPort);
     }
 
     @Override
@@ -77,16 +97,16 @@ public class AddFTP extends AppCompatActivity {
     }
 
     private void confirmAdd() {
-        String ipPart1 = ip1.getText().toString();
-        String ipPart2 = ip2.getText().toString();
-        String ipPart3 = ip3.getText().toString();
-        String ipPart4 = ip4.getText().toString();
-        String portStr = serverPort.getText().toString();
-        String alias = serverName.getText().toString();
-        String userName = username.getText().toString();
-        String passWord = password.getText().toString();
+        ipText1 = ipPart1.getText().toString();
+        ipText2 = ipPart2.getText().toString();
+        ipText3 = ipPart3.getText().toString();
+        ipText4 = ipPart4.getText().toString();
+        portStr = serverPort.getText().toString();
+        serverNameText = serverName.getText().toString();
+        usernameText = username.getText().toString();
+        passwordText = password.getText().toString();
 
-        if (!isValidIpPart(ipPart1) || !isValidIpPart(ipPart2) || !isValidIpPart(ipPart3) || !isValidIpPart(ipPart4)) {
+        if (!isValidIpPart(ipText1) || !isValidIpPart(ipText2) || !isValidIpPart(ipText3) || !isValidIpPart(ipText4)) {
             Toast.makeText(this, "invalid ip address, please check", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -98,16 +118,16 @@ public class AddFTP extends AppCompatActivity {
             return;
         }
 
-        if (alias.isEmpty() || userName.isEmpty() || passWord.isEmpty()) {
+        if (serverNameText.isEmpty() || usernameText.isEmpty() || passwordText.isEmpty()) {
             Toast.makeText(this, "empty server name, username or password for server.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        boolean passiveMode = passiveSwitcher.isChecked();
-        boolean ftpStat = ftpSwitcher.isChecked();
-        String encoding = encodeSwitcher.isChecked() ? "GBK" : "UTF-8";
+        mode = passiveSwitcher.isChecked();
+        ftps = ftpSwitcher.isChecked();
+        encodeText = encodeSwitcher.isChecked() ? "GBK" : "UTF-8";
 
-        saveServerConfig(new String[]{ipPart1, ipPart2, ipPart3, ipPart4, portStr}, alias, userName, passWord, passiveMode, ftpStat, encoding);
+        saveServerConfig();
         onBackPressed();
     }
 
@@ -129,58 +149,63 @@ public class AddFTP extends AppCompatActivity {
         }
     }
 
+    private void confirmFtp() {
+        String ip = ipText1 + "." + ipText2 + "." + ipText3 + "." + ipText4;
+        int port = Integer.parseInt(portStr);
+
+        FtpManager ftpManager = FtpManager.getInstance(ftps);
+        ThreadPoolExecutor threadPoolExecutor = ThreadManager.getInstance();
+        threadPoolExecutor.execute(() -> {
+            boolean isConnected = ftpManager.connect(ip, port, usernameText, passwordText, mode, encodeText);
+
+            runOnUiThread(() -> {
+                if (isConnected) {
+                    startActivity(new Intent(this, FileList.class)
+                            .putExtra("serverName", serverNameText));
+                    finish();
+                } else {
+                    Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
     private void loadServerConfig() {
-        String config = getIntent().getStringExtra("serverConfig");
-        String ipPart1 = null, ipPart2 = null, ipPart3 = null, ipPart4 = null,
-                port = null,
-                serverNameText = null,
-                usernameText = null, passwordText = null,
-                encode = null;
-        boolean mode = true, ftps = true, encoding = true;
-
-        if (config != null) {
-            try {
-                JSONObject serverConfig = new JSONObject(config);
-
-                JSONArray ipAndPort = serverConfig.getJSONArray("IPAndPort");
-                if (ipAndPort != null && ipAndPort.length() == 5) {
-                    ipPart1 = ipAndPort.getString(0);
-                    ipPart2 = ipAndPort.getString(1);
-                    ipPart3 = ipAndPort.getString(2);
-                    ipPart4 = ipAndPort.getString(3);
-                    port = ipAndPort.getString(4);
-                }
-                serverNameText = serverConfig.getString("ServerName");
-                usernameText = serverConfig.getString("Username");
-                passwordText = serverConfig.getString("Password");
-                mode = serverConfig.getBoolean("Mode");
-                ftps = serverConfig.getBoolean("FTPS");
-                encode = serverConfig.getString("Encode");
-            } catch (JSONException e) {
-                Log.e("loadConfig", "Error: " + e.getMessage(), e);
-            }
+        JSONArray ipAndPort = serverConfig.optJSONArray("IPAndPort");
+        if (ipAndPort != null && ipAndPort.length() == 5) {
+            ipText1 = ipAndPort.optString(0);
+            ipText2 = ipAndPort.optString(1);
+            ipText3 = ipAndPort.optString(2);
+            ipText4 = ipAndPort.optString(3);
+            portStr = ipAndPort.optString(4);
+        } else {
+            ipText1 = ipText2 = ipText3 = ipText4 = portStr = "";
         }
+        serverNameText = serverConfig.optString("ServerName", "");
+        usernameText = serverConfig.optString("Username", "");
+        passwordText = serverConfig.optString("Password", "");
+        mode = serverConfig.optBoolean("Mode", true);
+        ftps = serverConfig.optBoolean("FTPS", true);
+        encodeText = serverConfig.optString("Encode", "GBK");
 
-        if (encode != null) {
-            switch (encode) {
-                case "GBK":
-                    break;
-                case "UTF-8":
-                    encoding = false;
-                    break;
-                default: {
-                }
+        switch (encodeText) {
+            case "GBK":
+                break;
+            case "UTF-8":
+                encoding = false;
+                break;
+            default: {
+                // No other encoding is ready for application
             }
         }
 
         TextView title = findViewById(R.id.title);
         title.setText(serverNameText);
-
-        ip1.setText(ipPart1);
-        ip2.setText(ipPart2);
-        ip3.setText(ipPart3);
-        ip4.setText(ipPart4);
-        serverPort.setText(port);
+        ipPart1.setText(ipText1);
+        ipPart2.setText(ipText2);
+        ipPart3.setText(ipText3);
+        ipPart4.setText(ipText4);
+        serverPort.setText(portStr);
         serverName.setText(serverNameText);
         username.setText(usernameText);
         password.setText(passwordText);
@@ -189,24 +214,25 @@ public class AddFTP extends AppCompatActivity {
         encodeSwitcher.setChecked(encoding);
     }
 
-    private void saveServerConfig(String[] ipPort, String name, String username, String password, boolean mode, boolean ftps, String encoding) {
-        JSONObject serverConfig = new JSONObject();
+    private void saveServerConfig() {
         try {
             JSONArray ipPortArray = new JSONArray();
-            for (String item : ipPort) {
-                ipPortArray.put(item);
-            }
+            ipPortArray.put(ipText1);
+            ipPortArray.put(ipText2);
+            ipPortArray.put(ipText3);
+            ipPortArray.put(ipText4);
+            ipPortArray.put(portStr);
             serverConfig.put("IPAndPort", ipPortArray);
-            serverConfig.put("ServerName", name);
-            serverConfig.put("Username", username);
-            serverConfig.put("Password", password);
+            serverConfig.put("ServerName", serverNameText);
+            serverConfig.put("Username", usernameText);
+            serverConfig.put("Password", passwordText);
             serverConfig.put("Mode", mode);
             serverConfig.put("FTPS", ftps);
-            serverConfig.put("Encode", encoding);
+            serverConfig.put("Encode", encodeText);
 
             SharedPreferences sharedPreferences = getSharedPreferences("ServerConfigs", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(name, serverConfig.toString());
+            editor.putString(serverNameText, serverConfig.toString());
             editor.apply();
         } catch (Exception e) {
             Log.e("saveConfig", "Error: " + e.getMessage(), e);

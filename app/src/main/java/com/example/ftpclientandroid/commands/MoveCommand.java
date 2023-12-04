@@ -8,7 +8,7 @@ public class MoveCommand implements FileCommand{
     public void execute(Uri uri, String path) {}
 
     @Override
-    public void execute(Uri uri, String frompath, String toPath) {
+    public void execute(Uri uri, String fromPath, String toPath) {
 
     }
 }

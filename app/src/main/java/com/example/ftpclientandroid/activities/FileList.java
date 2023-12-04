@@ -57,7 +57,7 @@ public class FileList extends AppCompatActivity {
 
         container = findViewById(R.id.filelist);
         ImageButton back = findViewById(R.id.back);
-        back.setOnClickListener(view -> backToPre());
+        back.setOnClickListener(view -> onBackPressed());
         ImageButton upload = findViewById(R.id.file_add);
         upload.setOnClickListener(v -> uploadFile());
         ImageButton search = findViewById(R.id.search);
@@ -124,10 +124,6 @@ public class FileList extends AppCompatActivity {
                 runOnUiThread(() -> Toast.makeText(this, "加载文件列表失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         });
-    }
-
-    private void backToPre() {
-        super.onBackPressed();
     }
 
     private void uploadFile() {
