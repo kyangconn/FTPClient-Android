@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid.fileManagement;
+package com.example.ftpclientandroid.commands;
 
 import android.app.Activity;
 import android.content.ContentResolver;

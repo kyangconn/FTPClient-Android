@@ -19,9 +19,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ftpclientandroid.R;
-import com.example.ftpclientandroid.fileManagement.DownloadCommand;
-import com.example.ftpclientandroid.fileManagement.FileCommand;
-import com.example.ftpclientandroid.fileManagement.UploadCommand;
+import com.example.ftpclientandroid.commands.DownloadCommand;
+import com.example.ftpclientandroid.commands.FileCommand;
+import com.example.ftpclientandroid.commands.UploadCommand;
 import com.example.ftpclientandroid.utils.FtpManager;
 import com.example.ftpclientandroid.utils.FileManager;
 import com.example.ftpclientandroid.utils.ThreadManager;
