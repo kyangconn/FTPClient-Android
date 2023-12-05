@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid;
+package com.kyang.ftpclient;
 
 import static org.junit.Assert.assertEquals;
 

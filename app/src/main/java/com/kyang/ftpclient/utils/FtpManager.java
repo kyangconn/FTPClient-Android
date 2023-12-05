@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid.utils;
+package com.kyang.ftpclient.utils;
 
 import android.util.Log;
 
@@ -21,8 +21,8 @@ public class FtpManager {
     private static FtpManager instance;
     private final FTPClient ftpClient;
 
-    private FtpManager(boolean useFTPS) {
-        if (useFTPS) {
+    private FtpManager(boolean useFtps) {
+        if (useFtps) {
             FTPSClient ftps = new FTPSClient("TLS", false);
             ftps.setSocketFactory(new DefaultSocketFactory());
 
@@ -49,9 +49,9 @@ public class FtpManager {
         }
     }
 
-    public static synchronized FtpManager getInstance(boolean useFTPS) {
+    public static synchronized FtpManager getInstance(boolean useFtps) {
         if (instance == null) {
-            instance = new FtpManager(useFTPS);
+            instance = new FtpManager(useFtps);
         }
         return instance;
     }

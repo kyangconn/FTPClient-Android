@@ -16,7 +16,7 @@
         android:theme="@style/Theme.FTPClientAndroid"
         tools:targetApi="31">
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.kyang.ftpclient.activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,13 +25,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.AddFTP"
+            android:name="com.kyang.ftpclient.activities.AddFTP"
             android:exported="true" />
         <activity
-            android:name=".activities.SearchFTP"
+            android:name="com.kyang.ftpclient.activities.SearchFTP"
             android:exported="true" />
         <activity
-            android:name=".activities.FileList"
+            android:name="com.kyang.ftpclient.activities.FileList"
             android:exported="true" />
     </application>
 

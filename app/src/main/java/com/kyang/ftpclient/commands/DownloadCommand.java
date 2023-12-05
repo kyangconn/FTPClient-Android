@@ -1,13 +1,12 @@
-package com.example.ftpclientandroid.commands;
+package com.kyang.ftpclient.commands;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.ftpclientandroid.utils.FtpManager;
+import com.kyang.ftpclient.utils.FtpManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,16 +16,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * @author kyang
  */
-public class DownloadCommand implements FileCommand{
+public class DownloadCommand implements FileCommand {
     private final Context context;
     private final FtpManager ftpManager;
-    private final ContentResolver contentResolver;
     private final ThreadPoolExecutor threadPoolExecutor;
 
-    public DownloadCommand(Context context, FtpManager ftpManager, ContentResolver contentResolver, ThreadPoolExecutor threadPoolExecutor) {
+    public DownloadCommand(Context context, FtpManager ftpManager, ThreadPoolExecutor threadPoolExecutor) {
         this.context = context;
         this.ftpManager = ftpManager;
-        this.contentResolver = contentResolver;
         this.threadPoolExecutor = threadPoolExecutor;
     }
 
@@ -44,6 +41,8 @@ public class DownloadCommand implements FileCommand{
                     inputStream.close();
                     if (ftpManager.completePendingCommand()) {
                         ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "文件下载成功", Toast.LENGTH_SHORT).show());
+                    } else {
+                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "文件下载失败", Toast.LENGTH_SHORT).show());
                     }
                 }
             } catch (IOException e) {
@@ -52,7 +51,4 @@ public class DownloadCommand implements FileCommand{
             }
         });
     }
-
-    @Override
-    public void execute(Uri uri, String fromPath, String toPath) {}
 }

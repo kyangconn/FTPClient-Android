@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey"
-    tools:context="com.example.ftpclientandroid.activities.AddFTP">
+    tools:context="com.kyang.ftpclient.activities.AddFTP">
 
     <LinearLayout
         android:id="@+id/titleBar"
@@ -272,8 +272,8 @@
         android:contentDescription="@string/confirm"
         android:rotationY="180"
         android:src="@drawable/ic_public_back"
-        app:borderWidth="0dp"
         app:backgroundTint="@color/white"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

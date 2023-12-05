@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid.utils;
+package com.kyang.ftpclient.utils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,9 +15,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.example.ftpclientandroid.R;
-import com.example.ftpclientandroid.activities.AddFTP;
-import com.example.ftpclientandroid.activities.FileList;
+import com.kyang.ftpclient.R;
+import com.kyang.ftpclient.activities.AddFTP;
+import com.kyang.ftpclient.activities.FileList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,7 +29,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author kyang
  */
 public class ActivitiesHelper {
-    private final Activity activity;
     private static String port;
     private static String ip;
     private static String serverName;
@@ -38,6 +37,7 @@ public class ActivitiesHelper {
     private static String encodeText;
     private static int portNumber;
     private static boolean mode, ftps;
+    private final Activity activity;
 
     public ActivitiesHelper(Activity activity) {
         this.activity = activity;

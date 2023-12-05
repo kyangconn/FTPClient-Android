@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid.activities;
+package com.kyang.ftpclient.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -13,10 +13,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.example.ftpclientandroid.R;
-import com.example.ftpclientandroid.utils.NetworkUtils;
-import com.example.ftpclientandroid.utils.Permission;
-import com.example.ftpclientandroid.utils.ThreadManager;
+import com.kyang.ftpclient.R;
+import com.kyang.ftpclient.utils.NetworkUtils;
+import com.kyang.ftpclient.utils.Permission;
+import com.kyang.ftpclient.utils.ThreadManager;
 
 import org.json.JSONArray;
 
@@ -26,9 +26,9 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author kyang
  */
 public class SearchFTP extends AppCompatActivity {
+    public int port = 21;
     private ThreadPoolExecutor threadPoolManager;
     private LinearLayout container;
-    public int port = 21;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

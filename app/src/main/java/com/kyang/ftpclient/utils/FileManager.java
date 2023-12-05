@@ -1,6 +1,6 @@
-package com.example.ftpclientandroid.utils;
+package com.kyang.ftpclient.utils;
 
-import com.example.ftpclientandroid.R;
+import com.kyang.ftpclient.R;
 
 import java.util.HashMap;
 import java.util.Map;

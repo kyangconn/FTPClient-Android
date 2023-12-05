@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid.utils;
+package com.kyang.ftpclient.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -51,14 +51,18 @@ public class NetworkUtils {
     }
 
     public interface IpCheckListener {
-        /**Implement when ip is reachable, pass it to another file and
+        /**
+         * Implement when ip is reachable, pass it to another file and
          * Make those code wait
+         *
          * @param ip Text of IP, example: "127.0.0.1"
          */
         void onIpReachable(String ip);
 
-        /**When the function above failed, or the ip timeout,
+        /**
+         * When the function above failed, or the ip timeout,
          * It hold this
+         *
          * @param e IOException in above
          */
         void onIpCheckFailed(Exception e);

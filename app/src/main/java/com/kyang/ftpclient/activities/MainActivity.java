@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid.activities;
+package com.kyang.ftpclient.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.example.ftpclientandroid.R;
-import com.example.ftpclientandroid.utils.ActivitiesHelper;
+import com.kyang.ftpclient.R;
+import com.kyang.ftpclient.utils.ActivitiesHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * @author kyang

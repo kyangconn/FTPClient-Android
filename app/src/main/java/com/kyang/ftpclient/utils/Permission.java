@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid.utils;
+package com.kyang.ftpclient.utils;
 
 import android.app.Activity;
 import android.content.Context;

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.ftpclientandroid'
+    namespace 'com.kyang.ftpclient'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.ftpclientandroid"
+        applicationId "com.kyang.ftpclient"
         minSdk 26
         targetSdk 33
         versionCode 1

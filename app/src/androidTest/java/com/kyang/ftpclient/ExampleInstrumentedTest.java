@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid;
+package com.kyang.ftpclient;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.ftpclientandroid", appContext.getPackageName());
+        assertEquals("com.kyang.ftpclient", appContext.getPackageName());
     }
 }

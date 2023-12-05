@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey"
-    tools:context="com.example.ftpclientandroid.activities.SearchFTP">
+    tools:context="com.kyang.ftpclient.activities.SearchFTP">
 
     <LinearLayout
         android:id="@+id/titleBar"
@@ -59,7 +59,7 @@
                 android:text="@string/alertMessage"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

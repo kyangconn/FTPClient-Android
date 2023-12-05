@@ -1,4 +1,4 @@
-package com.example.ftpclientandroid.activities;
+package com.kyang.ftpclient.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,11 +14,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ftpclientandroid.R;
-import com.example.ftpclientandroid.utils.FtpManager;
-import com.example.ftpclientandroid.utils.ThreadManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.kyang.ftpclient.R;
+import com.kyang.ftpclient.utils.FtpManager;
+import com.kyang.ftpclient.utils.ThreadManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;

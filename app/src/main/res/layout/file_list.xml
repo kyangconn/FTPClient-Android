@@ -5,9 +5,10 @@
     android:layout_height="match_parent"
     android:background="@color/grey"
     android:orientation="vertical"
-    tools:context="com.example.ftpclientandroid.activities.FileList">
+    tools:context="com.kyang.ftpclient.activities.FileList">
 
     <LinearLayout
+        android:id="@+id/textTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -31,7 +32,7 @@
             style="@style/BaseImageButton"
             android:background="@color/white"
             android:contentDescription="@string/add_server"
-            android:src="@drawable/ic_public_add" />
+            android:src="@drawable/ic_public_upload" />
 
         <ImageButton
             android:id="@+id/search"
@@ -39,7 +40,39 @@
             android:background="@color/white"
             android:contentDescription="@string/search"
             android:src="@drawable/ic_public_search" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/searchTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/search_back"
+            style="@style/BaseImageButton"
+            android:background="@color/white"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_public_back" />
+
+        <EditText
+            android:id="@+id/search_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:autofillHints="search"
+            android:hint="@string/search"
+            android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/search_ok"
+            style="@style/BaseImageButton"
+            android:background="@color/white"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_public_search" />
     </LinearLayout>
 
     <ScrollView
@@ -63,7 +96,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageButton
             android:id="@+id/dock_download"
@@ -71,13 +104,6 @@
             android:background="@color/white"
             android:contentDescription="@string/download_file"
             android:src="@drawable/ic_public_download" />
-
-        <ImageButton
-            android:id="@+id/dock_copy"
-            style="@style/BaseImageButton"
-            android:background="@color/white"
-            android:contentDescription="@string/copy_file"
-            android:src="@drawable/ic_public_copy" />
 
         <ImageButton
             android:id="@+id/dock_move"
@@ -92,5 +118,33 @@
             android:background="@color/white"
             android:contentDescription="@string/delete_file"
             android:src="@drawable/ic_public_delete" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/confirm_dock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/confirm_cancel"
+            style="@style/BaseImageButton"
+            android:background="@color/white"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_public_back" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3" />
+
+        <ImageButton
+            android:id="@+id/confirm_ok"
+            style="@style/BaseImageButton"
+            android:background="@color/white"
+            android:contentDescription="@string/confirm"
+            android:src="@drawable/ic_public_ok" />
     </LinearLayout>
 </LinearLayout>

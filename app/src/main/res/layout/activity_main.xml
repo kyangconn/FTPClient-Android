@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="start"
     android:background="@color/grey"
-    tools:context="com.example.ftpclientandroid.activities.MainActivity">
+    tools:context="com.kyang.ftpclient.activities.MainActivity">
 
     <LinearLayout
         android:id="@+id/titleBar"
