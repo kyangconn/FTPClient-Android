@@ -11,7 +11,6 @@ import org.apache.commons.net.util.SubnetUtils;
 
 import java.io.IOException;
 import java.net.Inet4Address;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author kyang
@@ -36,39 +35,36 @@ public class NetworkUtils {
         return null;
     }
 
-    public static void getIpConcurrent(String[] allIps, ThreadPoolExecutor executor, IpCheckListener listener) {
+    public static void getIpConcurrent(String[] allIps, IpCheckListener listener) {
         for (String ip : allIps) {
-            executor.execute(() -> {
-                try {
-                    boolean isReachable = Inet4Address.getByName(ip).isReachable(2000);
-                    if (isReachable) {
-                        listener.onIpReachable(ip);
-                    }
-                } catch (IOException e) {
-                    listener.onIpCheckFailed(e);
+            try {
+                boolean isReachable = Inet4Address.getByName(ip).isReachable(2000);
+                if (isReachable) {
+                    listener.onIpReachable(ip);
                 }
-            });
+            } catch (IOException e) {
+                listener.onIpCheckFailed(e);
+            }
         }
     }
 
-    public static void getFtpOnIp(String ip, ThreadPoolExecutor executor, FtpConnectionListener listener) {
-        executor.execute(() -> {
-            FTPClient ftpClient = new FTPClient();
-            try {
-                ftpClient.connect(ip, 21);
-                boolean isConnected = ftpClient.isConnected();
-                ftpClient.disconnect();
+    public static void getFtpOnIp(String ip, FtpConnectionListener listener) {
+        FTPClient ftpClient = new FTPClient();
+        try {
+            ftpClient.connect(ip, 21);
+            boolean isConnected = ftpClient.isConnected();
+            ftpClient.disconnect();
 
-                if (isConnected) {
-                    listener.onFtpConnectionSuccess(ip);
-                } else {
-                    listener.onFtpConnectionFailed(ip);
-                }
-
-            } catch (IOException e) {
+            if (isConnected) {
+                listener.onFtpConnectionSuccess(ip);
+            } else {
                 listener.onFtpConnectionFailed(ip);
             }
-        });
+
+        } catch (IOException e) {
+            listener.onFtpConnectionFailed(ip);
+        }
+
     }
 
     public interface IpCheckListener {
@@ -87,9 +83,6 @@ public class NetworkUtils {
         void onIpCheckFailed(Exception e);
     }
 
-    /**
-     * Listener interface for FTP connection results.
-     */
     public interface FtpConnectionListener {
         /**
          * Called when a successful FTP connection is established.

@@ -119,7 +119,8 @@ public class ActivitiesHelper {
             FtpManager ftpManager = FtpManager.getInstance(ftps);
             ThreadPoolExecutor threadPoolExecutor = ThreadManager.getInstance();
             threadPoolExecutor.execute(() -> {
-                boolean isConnected = ftpManager.connect(ip, portNumber, username, password, mode, encodeText);
+                boolean isConnected = ftpManager.connect(ip, portNumber,
+                        username, password, mode, encodeText);
 
                 activity.runOnUiThread(() -> {
                     if (isConnected) {

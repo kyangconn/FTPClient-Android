@@ -26,7 +26,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author kyang
  */
 public class SearchFTP extends AppCompatActivity {
-    public int port = 21;
     private ThreadPoolExecutor threadPoolManager;
     private LinearLayout container;
 
@@ -43,10 +42,10 @@ public class SearchFTP extends AppCompatActivity {
 
         String[] allIps = NetworkUtils.getAllIps(this);
         if (allIps != null) {
-            NetworkUtils.getIpConcurrent(allIps, threadPoolManager, new NetworkUtils.IpCheckListener() {
+            threadPoolManager.execute(() -> NetworkUtils.getIpConcurrent(allIps, new NetworkUtils.IpCheckListener() {
                 @Override
                 public void onIpReachable(String ip) {
-                    NetworkUtils.getFtpOnIp(ip, threadPoolManager, new NetworkUtils.FtpConnectionListener() {
+                    NetworkUtils.getFtpOnIp(ip, new NetworkUtils.FtpConnectionListener() {
                         @Override
                         public void onFtpConnectionSuccess(String ip) {
                             runOnUiThread(() -> createTextView(ip));
@@ -65,7 +64,7 @@ public class SearchFTP extends AppCompatActivity {
                     runOnUiThread(() -> findViewById(R.id.alertMessage)
                             .setVisibility(View.VISIBLE));
                 }
-            });
+            }));
         }
 
 
@@ -109,7 +108,7 @@ public class SearchFTP extends AppCompatActivity {
         for (String part : ipParts) {
             array.put(part);
         }
-        array.put(String.valueOf(port));
+        array.put(String.valueOf(21));
 
         String result = String.format("{\"IPAndPort\":%s,\"Mode\":true,\"FTPS\":true,\"Encode\":\"GBK\"}", array);
         startActivity(new Intent(this, AddFTP.class)

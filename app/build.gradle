@@ -3,6 +3,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Onedrive\\OneDrive - rongkang\\Documents\\token\\IDEAToken.jks')
+            storePassword '123456'
+            keyAlias 'idea'
+            keyPassword '123456'
+        }
+    }
     namespace 'com.kyang.ftpclient'
     compileSdk 33
 

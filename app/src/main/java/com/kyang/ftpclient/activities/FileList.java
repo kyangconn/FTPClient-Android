@@ -42,11 +42,11 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class FileList extends AppCompatActivity {
     private final FtpManager ftpManager = FtpManager.getCurrentInstance();
-    private FTPFile selectFile;
-    private ThreadPoolExecutor threadPoolExecutor;
+    private final ThreadPoolExecutor threadPoolExecutor = ThreadManager.getInstance();
     private ActivityResultLauncher<Intent> createFileLauncher;
     private LinearLayout container;
     private String currentPath = "/";
+    private FTPFile selectFile;
     private FileCommand currentCommand;
 
     @Override
@@ -54,7 +54,6 @@ public class FileList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_list);
 
-        threadPoolExecutor = ThreadManager.getInstance();
         createFileLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::handleCreateFileResult);
 
         String titleName = getIntent().getStringExtra("serverName");

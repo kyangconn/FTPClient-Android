@@ -2,6 +2,7 @@ package com.kyang.ftpclient.utils;
 
 import android.util.Log;
 
+import org.apache.commons.net.DefaultSocketFactory;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -10,8 +11,6 @@ import org.apache.commons.net.ftp.FTPSClient;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * @author kyang
@@ -22,8 +21,11 @@ public class FtpManager {
 
     private FtpManager(boolean useFtps) {
         if (useFtps) {
-            FTPSClient ftps = new FTPSClient("TLS", false);
-            ftps.setSocketFactory(SSLSocketFactory.getDefault());
+            System.setProperty("jdk.tls.useExtendedMasterSecret", "false");
+            System.setProperty("jdk.tls.client.enableSessionTicketExtension", "false");
+            System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
+            FTPSClient ftps = new FTPSClient("TLS");
+            ftps.setSocketFactory(new DefaultSocketFactory());
 
             this.ftpClient = ftps;
         } else {
