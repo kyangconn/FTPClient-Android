@@ -23,6 +23,7 @@ import com.kyang.ftpclient.R;
 import com.kyang.ftpclient.commands.DownloadCommand;
 import com.kyang.ftpclient.commands.FileCommand;
 import com.kyang.ftpclient.commands.UploadCommand;
+import com.kyang.ftpclient.utils.ActivitiesHelper;
 import com.kyang.ftpclient.utils.FileManager;
 import com.kyang.ftpclient.utils.FtpManager;
 import com.kyang.ftpclient.utils.ThreadManager;
@@ -112,7 +113,8 @@ public class FileList extends AppCompatActivity {
                 runOnUiThread(() -> updateFileListView(files));
             } catch (IOException e) {
                 Log.e("refreshFileList", "Error: " + e.getMessage(), e);
-                runOnUiThread(() -> Toast.makeText(this, "加载文件列表失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(this,
+                        "Load File list Failed: " + ActivitiesHelper.getError(e), Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -146,21 +148,25 @@ public class FileList extends AppCompatActivity {
     private List<FTPFile> search(String searchQuery) {
         String searchPath = currentPath;
         List<FTPFile> result = new ArrayList<>();
-        try {
-            FTPFile[] allFiles = ftpManager.listFiles(searchPath);
+        threadPoolExecutor.execute(() -> {
+            try {
+                FTPFile[] allFiles = ftpManager.listFiles(searchPath);
 
-            for (FTPFile file : allFiles) {
-                if (file.isDirectory()) {
-                    result.addAll(search(searchQuery));
-                }
+                for (FTPFile file : allFiles) {
+                    if (file.isDirectory()) {
+                        result.addAll(search(searchQuery));
+                    }
 
-                if (file.getName().contains(searchQuery)) {
-                    result.add(file);
+                    if (file.getName().contains(searchQuery)) {
+                        result.add(file);
+                    }
                 }
+            } catch (IOException e) {
+                Log.e("FTP Search", "IO error occurred while searching files", e);
+                runOnUiThread(() -> Toast.makeText(this,
+                        "Search File failed:" + ActivitiesHelper.getError(e), Toast.LENGTH_SHORT).show());
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        });
 
         return result;
     }
@@ -184,14 +190,14 @@ public class FileList extends AppCompatActivity {
         if (file.isDirectory()) {
             threadPoolExecutor.execute(() -> {
                 try {
-                    if (ftpManager.changeWorkingDirectory(currentPath + file.getName() + '/')) {
+                    if (ftpManager.changeWorkingDirectory(currentPath + file.getName() + "/")) {
                         refreshFileList(file.getName());
                     }
                 } catch (IOException e) {
-                    Log.e("changeDir", "ftp.changeWorkingDir", e);
+                    Log.e("Click File", "IO error occurred while change working directory", e);
+                    throw new RuntimeException(e);
                 }
             });
-
         } else {
             selectFile = file;
             currentCommand = new DownloadCommand(this, ftpManager, threadPoolExecutor);
@@ -241,7 +247,7 @@ public class FileList extends AppCompatActivity {
                                     "Move operation complete", Toast.LENGTH_SHORT).show());
                         }
                     } catch (IOException e) {
-                        Log.e("dockMove", "dockMove: ftp rename error", e);
+                        Log.e("Move File", "IO error occurred while moving file", e);
                         throw new RuntimeException(e);
                     }
                 });
@@ -257,12 +263,14 @@ public class FileList extends AppCompatActivity {
         threadPoolExecutor.execute(() -> {
             try {
                 if (ftpManager.deleteFile(file.getName())) {
-                    runOnUiThread(() -> Toast.makeText(this, "File delete success", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(this,
+                            "File delete success", Toast.LENGTH_SHORT).show());
                 } else {
-                    runOnUiThread(() -> Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(this,
+                            "File delete failed", Toast.LENGTH_SHORT).show());
                 }
             } catch (IOException e) {
-                Log.e("delete", "delete file error", e);
+                Log.e("Del File", "IO error occurred while delete file", e);
                 throw new RuntimeException(e);
             }
         });
@@ -298,7 +306,6 @@ public class FileList extends AppCompatActivity {
     public void onBackPressed() {
         if ("/".equals(currentPath)) {
             threadPoolExecutor.execute(ftpManager::disconnect);
-
             startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {

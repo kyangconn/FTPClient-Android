@@ -57,10 +57,7 @@ public class NetworkUtils {
 
             if (isConnected) {
                 listener.onFtpConnectionSuccess(ip);
-            } else {
-                listener.onFtpConnectionFailed(ip);
             }
-
         } catch (IOException e) {
             listener.onFtpConnectionFailed(ip);
         }

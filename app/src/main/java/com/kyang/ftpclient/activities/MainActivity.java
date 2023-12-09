@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -45,12 +46,14 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject serverConfig = getServerConfigAtIndex(i);
                 if (serverConfig != null) {
-                    ConstraintLayout layout = helper.createButton(checkBoxList, serverConfig);
+                    ConstraintLayout layout = helper.createButton(checkBoxList, serverConfig, container);
                     container.addView(layout);
                     layoutList.add(layout);
                 }
             } catch (Exception e) {
-                Log.e("initialPage", "Error: " + e.getMessage(), e);
+                Log.e("MainActivity", "Get serve config error: ", e);
+                Toast.makeText(this,
+                        "Get serve config error: " + ActivitiesHelper.getError(e), Toast.LENGTH_SHORT).show();
                 throw new RuntimeException(e);
             }
         }
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 if (layout != null) {
                     container.removeView(layout);
                 } else {
-                    Log.i("dockPass.checkLayout", "真奇怪，怎么会发生这种不可能发生的错误呢？");
+                    Log.i("Check dock in MainActivity", "真奇怪，怎么会发生这种不可能发生的错误呢？");
                 }
             }
         }
@@ -156,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             return new JSONObject(jsonString);
         } catch (JSONException e) {
-            Log.e("getConfig", "Error parsing JSON", e);
+            Log.e("Get server config", "Error parsing JSON: ", e);
             return null;
         }
     }

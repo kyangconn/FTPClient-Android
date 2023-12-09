@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +46,26 @@ public class ActivitiesHelper {
         this.activity = activity;
     }
 
-    public ConstraintLayout createButton(List<CheckBox> checkBoxList, JSONObject serverConfig) {
+    public static String getError(Exception e) {
+        String exceptionType = e.getClass().getSimpleName();
+
+        String exceptionMessage = e.getMessage();
+        if (exceptionMessage != null) {
+            int index = exceptionMessage.indexOf(':');
+            if (index != -1) {
+                exceptionMessage = exceptionMessage.substring(0, index);
+            }
+        }
+
+        String simpleErrorMessage = exceptionType;
+        if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
+            simpleErrorMessage += " - " + exceptionMessage;
+        }
+
+        return simpleErrorMessage;
+    }
+
+    public ConstraintLayout createButton(List<CheckBox> checkBoxList, JSONObject serverConfig, LinearLayout container) {
         JSONArray ipAndPort;
         if (serverConfig != null) {
             ipAndPort = serverConfig.optJSONArray("IPAndPort");
@@ -68,7 +88,7 @@ public class ActivitiesHelper {
         }
 
         LayoutInflater inflater = LayoutInflater.from(activity);
-        ConstraintLayout layout = (ConstraintLayout) inflater.inflate(R.layout.activity_main_element, null);
+        ConstraintLayout layout = (ConstraintLayout) inflater.inflate(R.layout.activity_main_element, container, false);
 
         CheckBox checkBox = layout.findViewById(R.id.check_box);
         TextView ipText = layout.findViewById(R.id.ip_text);
@@ -82,7 +102,7 @@ public class ActivitiesHelper {
                 activity.finish();
             } else {
                 Toast.makeText(activity, "This is a empty config", Toast.LENGTH_SHORT).show();
-                Log.i("serverEdit", "createButtonLayout: a empty config");
+                Log.i("Edit server config", "createButtonLayout: a empty config");
             }
         });
 
@@ -161,13 +181,19 @@ public class ActivitiesHelper {
         dialog.show();
     }
 
-
     public interface DialogCallback {
+
         /**
-         * give Result from MainActivity.authenticationDialog
-         * to MainActivity for create ftp connection
+         * Called when the dialog process is completed.
+         * <p>
+         * This method is invoked with the result of the authentication process
+         * initiated by {@link #authenticationDialog}. The implementation of this method
+         * should handle the next steps based on the authentication result.
+         * </p>
          *
-         * @param result result of Authentication
+         * @param result The result of the authentication.
+         *               {@code true} if the authentication was successful,
+         *               {@code false} otherwise.
          */
         void onResult(boolean result);
     }

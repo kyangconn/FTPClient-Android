@@ -24,9 +24,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author kyang
+ * @noinspection AlibabaClassNamingShouldBeCamel
  */
 public class SearchFTP extends AppCompatActivity {
-    private ThreadPoolExecutor threadPoolManager;
     private LinearLayout container;
 
     @Override
@@ -37,8 +37,7 @@ public class SearchFTP extends AppCompatActivity {
         container = findViewById(R.id.server_list);
 
         Permission.requestPermission(this, Manifest.permission.ACCESS_NETWORK_STATE);
-        threadPoolManager = ThreadManager.getInstance();
-
+        ThreadPoolExecutor threadPoolManager = ThreadManager.getInstance();
 
         String[] allIps = NetworkUtils.getAllIps(this);
         if (allIps != null) {
@@ -66,7 +65,6 @@ public class SearchFTP extends AppCompatActivity {
                 }
             }));
         }
-
 
         ImageButton back = findViewById(R.id.search_back);
         back.setOnClickListener(v -> onBackPressed());

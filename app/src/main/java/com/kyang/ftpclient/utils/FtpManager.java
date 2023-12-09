@@ -73,7 +73,7 @@ public class FtpManager {
 
             return true;
         } catch (IOException e) {
-            Log.e("connectFTP", "connection failed", e);
+            Log.e("FTP connect", "Make FTP connection failed", e);
             return false;
         }
     }
@@ -83,12 +83,12 @@ public class FtpManager {
             try {
                 ftpClient.logout();
             } catch (IOException e) {
-                Log.i("logoutFTP", "error when use .logout()");
+                Log.e("FTP Disconnect", "Error during FTP logout", e);
             } finally {
                 try {
                     ftpClient.disconnect();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    Log.e("FTP Disconnect", "Error during FTP disconnect", e);
                 }
             }
         }

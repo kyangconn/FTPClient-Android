@@ -28,6 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author kyang
+ * @noinspection AlibabaClassNamingShouldBeCamel
  */
 public class AddFTP extends AppCompatActivity {
     private EditText ipPart1, ipPart2, ipPart3, ipPart4, serverPort, serverName, username, password;
@@ -251,7 +252,7 @@ public class AddFTP extends AppCompatActivity {
             editor.putString(serverNameText, serverConfig.toString());
             editor.apply();
         } catch (Exception e) {
-            Log.e("saveConfig", "Error: " + e.getMessage(), e);
+            Log.e("Save Config", "error occurred while save config: ", e);
             throw new RuntimeException(e);
         }
     }
