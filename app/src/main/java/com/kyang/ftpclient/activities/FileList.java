@@ -235,15 +235,17 @@ public class FileList extends AppCompatActivity {
         confirm.setOnClickListener(v -> {
             String toPath = currentPath + file.getName();
             if (!toPath.equals(fromPath)) {
-                try {
-                    if (ftpManager.rename(fromPath, toPath)) {
-                        Toast.makeText(this,
-                                "Move operation complete", Toast.LENGTH_SHORT).show();
+                threadPoolExecutor.execute(() -> {
+                    try {
+                        if (ftpManager.rename(fromPath, toPath)) {
+                            runOnUiThread(() -> Toast.makeText(this,
+                                    "Move operation complete", Toast.LENGTH_SHORT).show());
+                        }
+                    } catch (IOException e) {
+                        Log.e("dockMove", "dockMove: ftp rename error", e);
+                        throw new RuntimeException(e);
                     }
-                } catch (IOException e) {
-                    Log.e("dockMove", "dockMove: ftp rename error", e);
-                    throw new RuntimeException(e);
-                }
+                });
             } else {
                 Toast.makeText(this,
                         "You have select same location, please try again", Toast.LENGTH_SHORT).show();
@@ -253,16 +255,18 @@ public class FileList extends AppCompatActivity {
     }
 
     private void dockDel(FTPFile file, LinearLayout dock) {
-        try {
-            if (ftpManager.deleteFile(file.getName())) {
-                Toast.makeText(this, "File delete success", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
+        threadPoolExecutor.execute(() -> {
+            try {
+                if (ftpManager.deleteFile(file.getName())) {
+                    runOnUiThread(() -> Toast.makeText(this, "File delete success", Toast.LENGTH_SHORT).show());
+                } else {
+                    runOnUiThread(() -> Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show());
+                }
+            } catch (IOException e) {
+                Log.e("delete", "delete file error", e);
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            Log.e("delete", "delete file error", e);
-            throw new RuntimeException(e);
-        }
+        });
         dock.setVisibility(View.GONE);
     }
 
@@ -294,23 +298,14 @@ public class FileList extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if ("/".equals(currentPath)) {
-            if (ftpManager != null && ftpManager.isConnected()) {
-                ftpManager.disconnect();
-            }
+            threadPoolExecutor.execute(ftpManager::disconnect);
+
             startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {
             int lastIndex = currentPath.lastIndexOf('/');
             currentPath = (lastIndex > 0) ? currentPath.substring(0, lastIndex) : "/";
             refreshFileList(currentPath);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (threadPoolExecutor != null && !threadPoolExecutor.isShutdown()) {
-            threadPoolExecutor.shutdown();
         }
     }
 }

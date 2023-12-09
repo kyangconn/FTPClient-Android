@@ -97,6 +97,42 @@ public class AddFTP extends AppCompatActivity {
     }
 
     private void confirmAdd() {
+        if (confirmInput()) {
+            return;
+        }
+        onBackPressed();
+    }
+
+    private void confirmFtp() {
+        if (confirmInput()) {
+            return;
+        }
+
+        String ip = ipText1 + "." + ipText2 + "." + ipText3 + "." + ipText4;
+        if ("".equals(portStr)) {
+            portStr = String.valueOf(21);
+        }
+        int port = Integer.parseInt(portStr);
+
+        FtpManager ftpManager = FtpManager.getInstance(ftps);
+        ThreadPoolExecutor threadPoolExecutor = ThreadManager.getInstance();
+        threadPoolExecutor.execute(() -> {
+            boolean isConnected = ftpManager.connect(ip, port,
+                    usernameText, passwordText, mode, encodeText);
+
+            runOnUiThread(() -> {
+                if (isConnected) {
+                    startActivity(new Intent(this, FileList.class)
+                            .putExtra("serverName", serverNameText));
+                    finish();
+                } else {
+                    Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+    private boolean confirmInput() {
         ipText1 = ipPart1.getText().toString();
         ipText2 = ipPart2.getText().toString();
         ipText3 = ipPart3.getText().toString();
@@ -108,19 +144,19 @@ public class AddFTP extends AppCompatActivity {
 
         if (!isValidIpPart(ipText1) || !isValidIpPart(ipText2) || !isValidIpPart(ipText3) || !isValidIpPart(ipText4)) {
             Toast.makeText(this, "invalid ip address, please check", Toast.LENGTH_SHORT).show();
-            return;
+            return true;
         }
 
         if (portStr.isEmpty()) {
             portStr = "21";
         } else if (!isValidPort(portStr)) {
             Toast.makeText(this, "invalid port for ip, please try again", Toast.LENGTH_SHORT).show();
-            return;
+            return true;
         }
 
         if (serverNameText.isEmpty() || usernameText.isEmpty() || passwordText.isEmpty()) {
             Toast.makeText(this, "empty server name, username or password for server.", Toast.LENGTH_SHORT).show();
-            return;
+            return true;
         }
 
         mode = passiveSwitcher.isChecked();
@@ -128,7 +164,7 @@ public class AddFTP extends AppCompatActivity {
         encodeText = encodeSwitcher.isChecked() ? "GBK" : "UTF-8";
 
         saveServerConfig();
-        onBackPressed();
+        return false;
     }
 
     private boolean isValidIpPart(String part) {
@@ -147,27 +183,6 @@ public class AddFTP extends AppCompatActivity {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    private void confirmFtp() {
-        String ip = ipText1 + "." + ipText2 + "." + ipText3 + "." + ipText4;
-        int port = Integer.parseInt(portStr);
-
-        FtpManager ftpManager = FtpManager.getInstance(ftps);
-        ThreadPoolExecutor threadPoolExecutor = ThreadManager.getInstance();
-        threadPoolExecutor.execute(() -> {
-            boolean isConnected = ftpManager.connect(ip, port, usernameText, passwordText, mode, encodeText);
-
-            runOnUiThread(() -> {
-                if (isConnected) {
-                    startActivity(new Intent(this, FileList.class)
-                            .putExtra("serverName", serverNameText));
-                    finish();
-                } else {
-                    Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
     }
 
     private void loadServerConfig() {
@@ -190,6 +205,7 @@ public class AddFTP extends AppCompatActivity {
 
         switch (encodeText) {
             case "GBK":
+                encoding = true;
                 break;
             case "UTF-8":
                 encoding = false;

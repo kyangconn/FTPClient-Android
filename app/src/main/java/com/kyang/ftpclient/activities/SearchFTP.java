@@ -41,23 +41,33 @@ public class SearchFTP extends AppCompatActivity {
         threadPoolManager = ThreadManager.getInstance();
 
 
-        threadPoolManager.execute(() -> {
-            String[] allIps = NetworkUtils.getAllIps(this);
-            if (allIps != null) {
-                NetworkUtils.checkIpsConcurrently(allIps, threadPoolManager, new NetworkUtils.IpCheckListener() {
-                    @Override
-                    public void onIpReachable(String ip) {
-                        runOnUiThread(() -> createTextView(ip));
-                    }
+        String[] allIps = NetworkUtils.getAllIps(this);
+        if (allIps != null) {
+            NetworkUtils.getIpConcurrent(allIps, threadPoolManager, new NetworkUtils.IpCheckListener() {
+                @Override
+                public void onIpReachable(String ip) {
+                    NetworkUtils.getFtpOnIp(ip, threadPoolManager, new NetworkUtils.FtpConnectionListener() {
+                        @Override
+                        public void onFtpConnectionSuccess(String ip) {
+                            runOnUiThread(() -> createTextView(ip));
+                        }
 
-                    @Override
-                    public void onIpCheckFailed(Exception e) {
-                        runOnUiThread(() -> findViewById(R.id.alertMessage)
-                                .setVisibility(View.VISIBLE));
-                    }
-                });
-            }
-        });
+                        @Override
+                        public void onFtpConnectionFailed(String ip) {
+                            runOnUiThread(() -> findViewById(R.id.alertMessage)
+                                    .setVisibility(View.VISIBLE));
+                        }
+                    });
+                }
+
+                @Override
+                public void onIpCheckFailed(Exception e) {
+                    runOnUiThread(() -> findViewById(R.id.alertMessage)
+                            .setVisibility(View.VISIBLE));
+                }
+            });
+        }
+
 
         ImageButton back = findViewById(R.id.search_back);
         back.setOnClickListener(v -> onBackPressed());
@@ -103,7 +113,7 @@ public class SearchFTP extends AppCompatActivity {
 
         String result = String.format("{\"IPAndPort\":%s,\"Mode\":true,\"FTPS\":true,\"Encode\":\"GBK\"}", array);
         startActivity(new Intent(this, AddFTP.class)
-                .putExtra("ServerConfig", result));
+                .putExtra("serverConfig", result));
         finish();
     }
 

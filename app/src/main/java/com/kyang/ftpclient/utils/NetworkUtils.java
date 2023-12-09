@@ -6,6 +6,7 @@ import android.net.LinkAddress;
 import android.net.LinkProperties;
 import android.net.Network;
 
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.util.SubnetUtils;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class NetworkUtils {
         return null;
     }
 
-    public static void checkIpsConcurrently(String[] allIps, ThreadPoolExecutor executor, IpCheckListener listener) {
+    public static void getIpConcurrent(String[] allIps, ThreadPoolExecutor executor, IpCheckListener listener) {
         for (String ip : allIps) {
             executor.execute(() -> {
                 try {
@@ -50,21 +51,58 @@ public class NetworkUtils {
         }
     }
 
+    public static void getFtpOnIp(String ip, ThreadPoolExecutor executor, FtpConnectionListener listener) {
+        executor.execute(() -> {
+            FTPClient ftpClient = new FTPClient();
+            try {
+                ftpClient.connect(ip, 21);
+                boolean isConnected = ftpClient.isConnected();
+                ftpClient.disconnect();
+
+                if (isConnected) {
+                    listener.onFtpConnectionSuccess(ip);
+                } else {
+                    listener.onFtpConnectionFailed(ip);
+                }
+
+            } catch (IOException e) {
+                listener.onFtpConnectionFailed(ip);
+            }
+        });
+    }
+
     public interface IpCheckListener {
         /**
-         * Implement when ip is reachable, pass it to another file and
-         * Make those code wait
+         * Called when an IP is found to be reachable.
          *
-         * @param ip Text of IP, example: "127.0.0.1"
+         * @param ip The reachable IP address.
          */
         void onIpReachable(String ip);
 
         /**
-         * When the function above failed, or the ip timeout,
-         * It hold this
+         * Called when an IP check fails.
          *
-         * @param e IOException in above
+         * @param e The exception thrown during the IP check.
          */
         void onIpCheckFailed(Exception e);
+    }
+
+    /**
+     * Listener interface for FTP connection results.
+     */
+    public interface FtpConnectionListener {
+        /**
+         * Called when a successful FTP connection is established.
+         *
+         * @param ip The IP address where the FTP connection was successful.
+         */
+        void onFtpConnectionSuccess(String ip);
+
+        /**
+         * Called when an FTP connection attempt fails.
+         *
+         * @param ip The IP address where the FTP connection failed.
+         */
+        void onFtpConnectionFailed(String ip);
     }
 }
