@@ -17,7 +17,8 @@ To contribute to FTPClient, you will need:
 FTPClient aims to evolve for greater compatibility with mainstream FTP servers. Currently, it has been tested for stability with Windows IIS servers.
 
 ## License
-This project is licensed under the MIT License - see the LICENSE.md file for details. This application uses Apache Commons Net library, which is licensed under the Apache License 2.0.
+This application is licensed under the MIT License - see the LICENSE file for details. 
+This application uses Apache Commons Net library, which is licensed under the Apache License 2.0.
 
 ## Acknowledgments
 Thanks to the Apache Commons Net library for providing essential FTP functionality.
