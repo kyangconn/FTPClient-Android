@@ -39,9 +39,9 @@ public class UploadCommand implements FileCommand {
                 if (inputStream != null && documentFile != null) {
                     String fileName = documentFile.getName();
                     if (ftpManager.storeFile(path + fileName, inputStream)) {
-                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "文件上传成功", Toast.LENGTH_SHORT).show());
+                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "File Upload Success", Toast.LENGTH_SHORT).show());
                     } else {
-                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "文件上传失败", Toast.LENGTH_SHORT).show());
+                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show());
                     }
                 }
             } catch (IOException e) {

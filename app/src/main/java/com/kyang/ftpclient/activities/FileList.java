@@ -64,7 +64,7 @@ public class FileList extends AppCompatActivity {
         container = findViewById(R.id.filelist);
 
         ImageButton back = findViewById(R.id.back);
-        back.setOnClickListener(view -> onBackPressed());
+        back.setOnClickListener(v -> onBackPressed());
 
         ImageButton upload = findViewById(R.id.file_add);
         upload.setOnClickListener(v -> {

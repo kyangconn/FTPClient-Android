@@ -40,9 +40,9 @@ public class DownloadCommand implements FileCommand {
                     }
                     inputStream.close();
                     if (ftpManager.completePendingCommand()) {
-                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "文件下载成功", Toast.LENGTH_SHORT).show());
+                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "File Download Success", Toast.LENGTH_SHORT).show());
                     } else {
-                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "文件下载失败", Toast.LENGTH_SHORT).show());
+                        ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "File Download Failed", Toast.LENGTH_SHORT).show());
                     }
                 }
             } catch (IOException e) {
