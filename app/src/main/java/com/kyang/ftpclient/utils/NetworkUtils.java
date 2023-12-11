@@ -5,12 +5,14 @@ import android.net.ConnectivityManager;
 import android.net.LinkAddress;
 import android.net.LinkProperties;
 import android.net.Network;
+import android.util.Log;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.util.SubnetUtils;
 
 import java.io.IOException;
 import java.net.Inet4Address;
+import java.net.InetAddress;
 
 /**
  * @author kyang
@@ -23,12 +25,16 @@ public class NetworkUtils {
 
         if (linkProperties != null) {
             for (LinkAddress linkAddress : linkProperties.getLinkAddresses()) {
-                Inet4Address ip4Address = (Inet4Address) linkAddress.getAddress();
-                int ip4Prefix = linkAddress.getPrefixLength();
-                if (!ip4Address.isLoopbackAddress() && ip4Address.isSiteLocalAddress()) {
-                    String ip = ip4Address.getHostAddress() + "/" + ip4Prefix;
-                    SubnetUtils utils = new SubnetUtils(ip);
-                    return utils.getInfo().getAllAddresses();
+                InetAddress address = linkAddress.getAddress();
+
+                if (address instanceof Inet4Address) {
+                    Inet4Address ip4Address = (Inet4Address) address;
+                    int ip4Prefix = linkAddress.getPrefixLength();
+                    if (!ip4Address.isLoopbackAddress() && ip4Address.isSiteLocalAddress()) {
+                        String ip = ip4Address.getHostAddress() + "/" + ip4Prefix;
+                        SubnetUtils utils = new SubnetUtils(ip);
+                        return utils.getInfo().getAllAddresses();
+                    }
                 }
             }
         }
@@ -43,7 +49,8 @@ public class NetworkUtils {
                     listener.onIpReachable(ip);
                 }
             } catch (IOException e) {
-                listener.onIpCheckFailed(e);
+                Log.i("IP check", "getIpConcurrent: unavailable ip:" +
+                        ip + ActivitiesHelper.getError(e));
             }
         }
     }
@@ -71,13 +78,6 @@ public class NetworkUtils {
          * @param ip The reachable IP address.
          */
         void onIpReachable(String ip);
-
-        /**
-         * Called when an IP check fails.
-         *
-         * @param e The exception thrown during the IP check.
-         */
-        void onIpCheckFailed(Exception e);
     }
 
     public interface FtpConnectionListener {

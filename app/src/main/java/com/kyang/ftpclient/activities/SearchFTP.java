@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import com.kyang.ftpclient.utils.ThreadManager;
 import org.json.JSONArray;
 
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author kyang
@@ -28,6 +30,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class SearchFTP extends AppCompatActivity {
     private LinearLayout container;
+    private ThreadPoolExecutor threadPoolManager = ThreadManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,37 +40,49 @@ public class SearchFTP extends AppCompatActivity {
         container = findViewById(R.id.server_list);
 
         Permission.requestPermission(this, Manifest.permission.ACCESS_NETWORK_STATE);
-        ThreadPoolExecutor threadPoolManager = ThreadManager.getInstance();
 
+        searchFtp();
+
+        ImageButton back = findViewById(R.id.search_back);
+        back.setOnClickListener(v -> onBackPressed());
+    }
+
+    private void searchFtp() {
         String[] allIps = NetworkUtils.getAllIps(this);
-        if (allIps != null) {
-            threadPoolManager.execute(() -> NetworkUtils.getIpConcurrent(allIps, new NetworkUtils.IpCheckListener() {
-                @Override
-                public void onIpReachable(String ip) {
-                    NetworkUtils.getFtpOnIp(ip, new NetworkUtils.FtpConnectionListener() {
-                        @Override
-                        public void onFtpConnectionSuccess(String ip) {
-                            runOnUiThread(() -> createTextView(ip));
-                        }
+        ProgressBar progressBar = findViewById(R.id.waitingBar);
+        View alertMessage = findViewById(R.id.alertMessage);
 
-                        @Override
-                        public void onFtpConnectionFailed(String ip) {
-                            runOnUiThread(() -> findViewById(R.id.alertMessage)
-                                    .setVisibility(View.VISIBLE));
-                        }
+        if (allIps != null) {
+            runOnUiThread(() -> progressBar.setVisibility(View.VISIBLE));
+            AtomicInteger ipCheck = new AtomicInteger(0);
+            AtomicInteger ftpCheck = new AtomicInteger(0);
+
+            threadPoolManager.execute(() -> NetworkUtils.getIpConcurrent(allIps, ip -> NetworkUtils.getFtpOnIp(ip, new NetworkUtils.FtpConnectionListener() {
+                @Override
+                public void onFtpConnectionSuccess(String ip) {
+                    ftpCheck.incrementAndGet();
+                    runOnUiThread(() -> {
+                        createTextView(ip);
+                        progressBar.setVisibility(View.GONE);
+                        alertMessage.setVisibility(View.GONE);
                     });
                 }
 
                 @Override
-                public void onIpCheckFailed(Exception e) {
-                    runOnUiThread(() -> findViewById(R.id.alertMessage)
-                            .setVisibility(View.VISIBLE));
+                public void onFtpConnectionFailed(String ip) {
+                    if (ipCheck.incrementAndGet() == allIps.length) {
+                        runOnUiThread(() -> {
+                            progressBar.setVisibility(View.GONE);
+                            if (ftpCheck.get() == 0) {
+                                alertMessage.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
                 }
-            }));
+            })));
+        } else {
+            alertMessage.setVisibility(View.VISIBLE);
         }
-
-        ImageButton back = findViewById(R.id.search_back);
-        back.setOnClickListener(v -> onBackPressed());
     }
 
     private void createTextView(String ip) {

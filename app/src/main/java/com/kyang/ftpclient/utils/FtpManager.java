@@ -21,9 +21,6 @@ public class FtpManager {
 
     private FtpManager(boolean useFtps) {
         if (useFtps) {
-            System.setProperty("jdk.tls.useExtendedMasterSecret", "false");
-            System.setProperty("jdk.tls.client.enableSessionTicketExtension", "false");
-            System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
             FTPSClient ftps = new FTPSClient("TLS");
             ftps.setSocketFactory(new DefaultSocketFactory());
 
@@ -67,9 +64,10 @@ public class FtpManager {
             }
 
             ftpClient.setBufferSize(10240);
+            ftpClient.setDefaultTimeout(10000);
+            ftpClient.setConnectTimeout(5000);
             ftpClient.setControlEncoding(encoding);
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-            ftpClient.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);
 
             return true;
         } catch (IOException e) {

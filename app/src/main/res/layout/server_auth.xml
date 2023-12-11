@@ -5,6 +5,7 @@
     android:maxWidth="488dp"
     android:minWidth="320dp"
     android:orientation="vertical"
+    android:background="@drawable/bg_rounded_button"
     android:padding="4dp">
 
     <EditText

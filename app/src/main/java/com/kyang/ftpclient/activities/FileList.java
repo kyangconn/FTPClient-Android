@@ -136,7 +136,7 @@ public class FileList extends AppCompatActivity {
 
             icon.setImageResource(getIconBasedOnFileType(file));
             name.setText(file.getName());
-            time.setText(String.format("Last Modified: %s", formattedDate));
+            time.setText(String.format("%s", formattedDate));
 
             fileView.setOnClickListener(v -> clickFile(file));
             fileView.setOnLongClickListener(v -> pressFile(file));
